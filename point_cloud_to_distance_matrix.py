@@ -5,7 +5,7 @@ Author: Qingru Zhang
 
 '''
 import math
-
+import sys
 from cv2 import sqrt
 
 
@@ -31,16 +31,27 @@ def transposeMatrix(matrix):
 
 list_of_lists = []
 
-with open('point_cloud/pointcloud12.txt') as f:
-    for line in f:
-        inner_list = [float(elt.strip()) for elt in line.split(',')]
-        list_of_lists.append(inner_list)
+file_name = sys.argv[1]
+output_name = sys.argv[2]
+is_transpose_str = sys.argv[3]
+is_comma_str = sys.argv[4]
 
-list_of_lists = transposeMatrix(list_of_lists)
+with open(file_name) as f:
+    if is_comma_str == "true":
+        for line in f:
+                inner_list = [float(elt.strip()) for elt in line.split(',')]
+                list_of_lists.append(inner_list)
+    else:
+        for line in f:
+                inner_list = [float(elt.strip()) for elt in line.split('\t')]
+                list_of_lists.append(inner_list)
+
+
+if (is_transpose_str == "true"):
+    list_of_lists = transposeMatrix(list_of_lists)
 
 length = len(list_of_lists[0])
 dimension = len(list_of_lists)
-
 
 distance_matrix = []
 
@@ -64,7 +75,7 @@ for i in range(length):
 
 
 
-write_file = open("3_d_dis_mat.txt", "w")
+write_file = open(output_name, "w")
 for ele in distance_matrix:
     for i in range(len(ele)):
         if (i == len(ele) -1):
