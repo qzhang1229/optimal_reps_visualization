@@ -36,7 +36,10 @@ point_cloud_file = sys.argv[1]
 vertices_file = sys.argv[2]
 is_transpose_str = sys.argv[3]
 is_comma_str = sys.argv[4]
-# 'point_cloud/2x100-Gamma-4.csv.txt'
+tri_num_file = ""
+if (len(sys.argv)>5):
+    tri_num_file = sys.argv[5]
+
 with open(point_cloud_file) as f:
     if is_comma_str == "true":
         for line in f:
@@ -56,6 +59,11 @@ y_coordinate = coordinates_of_points[1]
 
 # "test_example_2/uniform_tri_loss_vertices.npy"
 edges = np.load(vertices_file)
+
+tri_num = 0
+if (tri_num_file !=""):
+    tri_num_arr = np.load(tri_num_file)
+    tri_num = tri_num_arr[0]
 
 
 # Make an ordered list of vertices to calculate the area.
@@ -85,10 +93,21 @@ for i in range (0,len(edges),2):
     edge_length+=connect_points(x_coordinate,y_coordinate,edges[i],edges[i+1])
     edge_num += 1
 
-print("Number of edges:"+ str(edge_num))
-print("Length of edges:"+ str(edge_length))
-print("Area:"+ str(area))
+# print("Number of edges:"+ str(edge_num))
+# print("Length of edges:"+ str(edge_length))
+# print("Area:"+ str(area))
 
 plt.scatter(x_coordinate,y_coordinate)
+x_max = max(x_coordinate)
+y_max = max(y_coordinate)
+if (tri_num!= 0):
+    plt.text(x_max,y_max, "Number of edges: "+ str(edge_num)+"\n Length of edges: "+ str(round(edge_length,4))+
+            "\n Number of triangles: "+ str(tri_num)+"\n Area: "+ 
+            str(round(area,4)), horizontalalignment='right', verticalalignment='top')
+else:
+    plt.text(x_max,y_max, "Number of edges: "+ str(edge_num)+"\n Length of edges: "+ str(round(edge_length,4))+"\n Area: "+ 
+            str(round(area,4)), horizontalalignment='right', verticalalignment='top')
+
+
 plt.show()
 
